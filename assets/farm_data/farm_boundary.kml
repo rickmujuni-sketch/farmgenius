@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document id="1mCIpQJnMUMwlv6v3cOZoxXf3TdFuMapx">
+	<name>Dr. Mujuni's Farm - Kawongo, Rakai</name>
+	<gx:CascadingStyle kml:id="__managed_style_02D0D963B83C79FA9201">
+		<Style>
+			<IconStyle>
+				<scale>1.2</scale>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>6</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<gx:CascadingStyle kml:id="__managed_style_1C9FD2AC5A3C79FA9200">
+		<Style>
+			<IconStyle>
+				<Icon>
+					<href>https://earth.google.com/earth/document/icon?color=1976d2&amp;id=2000&amp;scale=4</href>
+				</Icon>
+				<hotSpot x="64" y="128" xunits="pixels" yunits="insetPixels"/>
+			</IconStyle>
+			<LabelStyle>
+			</LabelStyle>
+			<LineStyle>
+				<color>ff2dc0fb</color>
+				<width>4</width>
+			</LineStyle>
+			<PolyStyle>
+				<color>40ffffff</color>
+			</PolyStyle>
+			<BalloonStyle>
+			</BalloonStyle>
+		</Style>
+	</gx:CascadingStyle>
+	<StyleMap id="__managed_style_00FD5F37EB3C79FA9200">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#__managed_style_1C9FD2AC5A3C79FA9200</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#__managed_style_02D0D963B83C79FA9201</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Placemark id="55DADA1C02000001">
+		<name>Your Farm</name>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Polygon>
+			<outerBoundaryIs>
+				<LinearRing>
+					<coordinates>
+						38.91665597312421,-7.081280300882266,0 38.91614681567437,-7.081236625840072,0 38.91588,-7.081165,0 38.91473961265322,-7.08339958134242,0 38.91526664194311,-7.083553636123059,0 38.91541506491836,-7.08362509461339,0 38.91532060503472,-7.083900616750031,0 38.91504778702282,-7.084562169122824,0 38.91507580567484,-7.085874115713854,0 38.9150833209367,-7.087829368646923,0 38.91660706398339,-7.088851999852462,0 38.91649050886416,-7.087131729463814,0 38.91684878886748,-7.085441577912741,0 38.91703889923931,-7.08436320449358,0 38.91739660491145,-7.083885773845678,0 38.9166876250688,-7.083095459163729,0 38.91733289625272,-7.082455604529874,0 38.91749748143962,-7.081573556811584,0 38.91711209108775,-7.081291495915269,0 38.91665597312421,-7.081280300882266,0 
+					</coordinates>
+				</LinearRing>
+			</outerBoundaryIs>
+		</Polygon>
+	</Placemark>
+	<Placemark id="0C3FBD035339875DBD19">
+		<name>farmhouse</name>
+		<LookAt>
+			<longitude>38.91522854492305</longitude>
+			<latitude>-7.083214859913937</latitude>
+			<altitude>288.7019868346852</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>999.92474671526</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.91528484914795,-7.082955424650799,289.5244692305628</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="06CD871E593987635DE0">
+		<name>Piggery shed</name>
+		<LookAt>
+			<longitude>38.91522854492305</longitude>
+			<latitude>-7.083214859913937</latitude>
+			<altitude>288.7019868346852</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>999.92474671526</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.91611229250724,-7.083395592720421,286.5081566510615</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="098F30967B3AAD0839C1">
+		<name>Borehole</name>
+		<LookAt>
+			<longitude>38.91666518653292</longitude>
+			<latitude>-7.082100407400101</latitude>
+			<altitude>287.4179902625327</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>320.7862495421796</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.91696952066818,-7.082267628796201,286.4515819007495</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="01ED9DF0CA3AAF847716">
+		<name>Servant Quarters</name>
+		<LookAt>
+			<longitude>38.91609933089682</longitude>
+			<latitude>-7.082820232637758</latitude>
+			<altitude>288.4240850884357</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>456.0938992734009</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.9158157072409,-7.08293367787459,288.6136368518587</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="00CB706A3E3AAF856B8C">
+		<name>Paddock for Cattles</name>
+		<LookAt>
+			<longitude>38.91609933089682</longitude>
+			<latitude>-7.082820232637758</latitude>
+			<altitude>288.4240850884357</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>456.0938992734009</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.91582048799773,-7.083239628454328,286.9610756061573</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="012F857A683AAF869F33">
+		<name>Goats</name>
+		<LookAt>
+			<longitude>38.91609933089682</longitude>
+			<latitude>-7.082820232637758</latitude>
+			<altitude>288.4240850884357</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>456.0938992734009</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.91595459742929,-7.082919336622616,288.5267270291998</coordinates>
+		</Point>
+	</Placemark>
+	<Placemark id="0D7EC2A0D13AAF871234">
+		<name>Chickens</name>
+		<LookAt>
+			<longitude>38.91609933089682</longitude>
+			<latitude>-7.082820232637758</latitude>
+			<altitude>288.4240850884357</altitude>
+			<heading>0</heading>
+			<tilt>0</tilt>
+			<gx:fovy>30</gx:fovy>
+			<range>456.0938992734009</range>
+			<altitudeMode>absolute</altitudeMode>
+		</LookAt>
+		<styleUrl>#__managed_style_00FD5F37EB3C79FA9200</styleUrl>
+		<Point>
+			<coordinates>38.91589663181936,-7.082956728819481,288.364224170724</coordinates>
+		</Point>
+	</Placemark>
+</Document>
+</kml>

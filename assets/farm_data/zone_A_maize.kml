@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Zone A - Maize Field</name>
+    <Placemark>
+      <name>Zone A - Maize</name>
+      <description>Primary maize crop zone</description>
+      <ExtendedData>
+        <Data name="zone_id">
+          <value>zone_a</value>
+        </Data>
+        <Data name="zone_type">
+          <value>crop</value>
+        </Data>
+        <Data name="crop_name">
+          <value>Maize</value>
+        </Data>
+        <Data name="crop_variety">
+          <value>Hybrid H515</value>
+        </Data>
+        <Data name="area_hectares">
+          <value>5.2</value>
+        </Data>
+        <Data name="planting_date">
+          <value>2025-11-15</value>
+        </Data>
+        <Data name="expected_maturity">
+          <value>2026-02-28</value>
+        </Data>
+        <Data name="soil_type">
+          <value>loamy</value>
+        </Data>
+        <Data name="expected_calendar">
+          <value>PLANTING,GERMINATION,GROWTH,FLOWERING,GRAIN_FILL,HARVEST</value>
+        </Data>
+      </ExtendedData>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              38.91400,-7.07800,0
+              38.92000,-7.07800,0
+              38.92000,-7.08300,0
+              38.91400,-7.08300,0
+              38.91400,-7.07800,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

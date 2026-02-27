@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Zone B - Cattle Pasture</name>
+    <Placemark>
+      <name>Zone B - Livestock</name>
+      <description>Cattle grazing and rearing zone</description>
+      <ExtendedData>
+        <Data name="zone_id">
+          <value>zone_b</value>
+        </Data>
+        <Data name="zone_type">
+          <value>livestock</value>
+        </Data>
+        <Data name="livestock_type">
+          <value>Cattle</value>
+        </Data>
+        <Data name="head_count">
+          <value>24</value>
+        </Data>
+        <Data name="area_hectares">
+          <value>8.0</value>
+        </Data>
+        <Data name="breed">
+          <value>Tanzanian Shorthorn</value>
+        </Data>
+        <Data name="expected_calendar">
+          <value>GRAZING,SUPPLEMENTAL_FEEDING,HEALTH_CHECK,BREEDING,CALVING</value>
+        </Data>
+      </ExtendedData>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              38.91600,-7.08500,0
+              38.92400,-7.08500,0
+              38.92400,-7.09200,0
+              38.91600,-7.09200,0
+              38.91600,-7.08500,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>

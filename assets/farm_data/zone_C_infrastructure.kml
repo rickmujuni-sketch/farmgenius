@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Zone C - Farm Infrastructure</name>
+    <Placemark>
+      <name>Zone C - Infrastructure</name>
+      <description>Water storage, equipment shed, and irrigation infrastructure</description>
+      <ExtendedData>
+        <Data name="zone_id">
+          <value>zone_c</value>
+        </Data>
+        <Data name="zone_type">
+          <value>infrastructure</value>
+        </Data>
+        <Data name="facilities">
+          <value>water_tank,equipment_shed,irrigation_pump</value>
+        </Data>
+        <Data name="water_tank_capacity_liters">
+          <value>50000</value>
+        </Data>
+        <Data name="area_hectares">
+          <value>0.5</value>
+        </Data>
+        <Data name="expected_calendar">
+          <value>MAINTENANCE,REPAIR,CLEANING,INSPECTION,SEASONAL_CHECK</value>
+        </Data>
+      </ExtendedData>
+      <Polygon>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>
+              38.91300,-7.09300,0
+              38.91500,-7.09300,0
+              38.91500,-7.09500,0
+              38.91300,-7.09500,0
+              38.91300,-7.09300,0
+            </coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>
