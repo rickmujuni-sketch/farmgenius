@@ -1,0 +1,30 @@
+name: SQL Policy Duplicate Check
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**/*.sql'
+      - 'scripts/check_sql_policy_duplicates.sh'
+      - '.github/workflows/sql-policy-duplicates.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - '**/*.sql'
+      - 'scripts/check_sql_policy_duplicates.sh'
+      - '.github/workflows/sql-policy-duplicates.yml'
+  workflow_dispatch:
+
+jobs:
+  check-duplicate-policies:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run canonical SQL duplicate-policy check
+        run: |
+          chmod +x scripts/check_sql_policy_duplicates.sh
+          scripts/check_sql_policy_duplicates.sh
