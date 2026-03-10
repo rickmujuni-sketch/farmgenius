@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="460" viewBox="0 0 1400 460" role="img" aria-labelledby="title desc">
+  <title id="title">FarmGenius logo — Dr. PF Farm Trust</title>
+  <desc id="desc">A memorial-inspired farm emblem with rising sun, fields, leaf and protective ring, paired with FarmGenius wordmark and Dr. PF Farm Trust subtitle.</desc>
+
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B5E20"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F4C542"/>
+      <stop offset="100%" stop-color="#E0A800"/>
+    </linearGradient>
+    <clipPath id="emblemClip">
+      <circle cx="230" cy="230" r="132"/>
+    </clipPath>
+  </defs>
+
+  <rect width="1400" height="460" fill="#FFFFFF"/>
+
+  <g transform="translate(0,0)">
+    <circle cx="230" cy="230" r="172" fill="none" stroke="url(#ringGrad)" stroke-width="22"/>
+    <circle cx="230" cy="230" r="144" fill="#F7FAF7" stroke="#2E7D32" stroke-width="4"/>
+
+    <g clip-path="url(#emblemClip)">
+      <rect x="90" y="90" width="280" height="280" fill="#EAF5EA"/>
+
+      <circle cx="230" cy="165" r="46" fill="url(#sunGrad)"/>
+
+      <path d="M90 260 C145 225, 195 210, 250 225 C305 240, 340 220, 370 200 L370 380 L90 380 Z" fill="#8BC34A"/>
+      <path d="M90 285 C145 250, 200 238, 250 252 C305 268, 340 252, 370 232 L370 380 L90 380 Z" fill="#66BB6A"/>
+      <path d="M90 315 C145 285, 198 276, 248 292 C303 309, 340 295, 370 278 L370 380 L90 380 Z" fill="#43A047"/>
+
+      <path d="M230 160 C232 226, 213 270, 190 306 C217 292, 237 273, 252 245 C268 273, 287 292, 314 306 C291 270, 272 226, 274 160" fill="#2E7D32" fill-opacity="0.88"/>
+      <path d="M252 170 C252 212, 244 238, 230 262 C216 238, 208 212, 208 170" fill="#FFFFFF" fill-opacity="0.22"/>
+    </g>
+
+    <path d="M149 128 C135 149, 128 174, 129 199" fill="none" stroke="#2E7D32" stroke-width="5" stroke-linecap="round"/>
+    <path d="M311 128 C325 149, 332 174, 331 199" fill="none" stroke="#2E7D32" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="230" cy="230" r="172" fill="none" stroke="#0F3D14" stroke-opacity="0.16" stroke-width="2"/>
+  </g>
+
+  <g transform="translate(440,105)">
+    <text x="0" y="130" font-size="108" font-family="Georgia, 'Times New Roman', serif" font-weight="700" fill="#1B5E20" letter-spacing="1.5">FARMGENIUS</text>
+    <rect x="2" y="154" width="630" height="5" fill="#2E7D32"/>
+    <text x="0" y="214" font-size="42" font-family="Arial, Helvetica, sans-serif" font-weight="600" fill="#37474F" letter-spacing="1.1">DR. PF FARM TRUST</text>
+    <text x="0" y="264" font-size="26" font-family="Arial, Helvetica, sans-serif" fill="#546E7A" letter-spacing="0.8">In honor of Dr. Pascal Fidelis Mujuni</text>
+    <text x="0" y="300" font-size="23" font-family="Arial, Helvetica, sans-serif" fill="#607D8B">Service • Stewardship • Scientific Excellence</text>
+  </g>
+</svg>

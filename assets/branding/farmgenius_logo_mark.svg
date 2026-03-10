@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">FarmGenius emblem mark</title>
+  <desc id="desc">Circular farm emblem with sunrise, cultivated fields and central leaf, honoring Dr. PF legacy.</desc>
+
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B5E20"/>
+      <stop offset="100%" stop-color="#2E7D32"/>
+    </linearGradient>
+    <linearGradient id="sunGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F4C542"/>
+      <stop offset="100%" stop-color="#E0A800"/>
+    </linearGradient>
+    <clipPath id="clip">
+      <circle cx="256" cy="256" r="144"/>
+    </clipPath>
+  </defs>
+
+  <rect width="512" height="512" fill="#FFFFFF"/>
+  <circle cx="256" cy="256" r="188" fill="none" stroke="url(#ringGrad)" stroke-width="24"/>
+  <circle cx="256" cy="256" r="156" fill="#F7FAF7" stroke="#2E7D32" stroke-width="4"/>
+
+  <g clip-path="url(#clip)">
+    <rect x="112" y="112" width="288" height="288" fill="#EAF5EA"/>
+    <circle cx="256" cy="186" r="50" fill="url(#sunGrad)"/>
+
+    <path d="M112 292 C170 250, 225 235, 285 252 C342 268, 374 248, 400 228 L400 420 L112 420 Z" fill="#8BC34A"/>
+    <path d="M112 322 C170 280, 226 267, 286 285 C343 303, 374 286, 400 268 L400 420 L112 420 Z" fill="#66BB6A"/>
+    <path d="M112 352 C170 314, 225 304, 284 323 C342 343, 374 329, 400 312 L400 420 L112 420 Z" fill="#43A047"/>
+
+    <path d="M256 176 C258 244, 236 290, 210 332 C239 316, 259 297, 274 268 C290 297, 309 316, 338 332 C312 290, 290 244, 292 176" fill="#2E7D32" fill-opacity="0.9"/>
+    <path d="M274 188 C274 230, 266 260, 256 282 C246 260, 238 230, 238 188" fill="#FFFFFF" fill-opacity="0.2"/>
+  </g>
+</svg>

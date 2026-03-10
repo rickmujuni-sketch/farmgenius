@@ -1,6 +1,7 @@
 /// KML Parser Service
 /// Phase 1: Parse real farm KML files to extract boundaries and placemarks
 /// Uses xml.dart to parse XML/KML format
+library;
 
 import 'package:xml/xml.dart' as xml;
 import 'package:flutter/services.dart';
@@ -21,11 +22,11 @@ class KmlParser {
 
   /// Internal: Parse XML document structure
   static ParsedKmlFarm _parseDocument(xml.XmlDocument document) {
-    final root = document.rootElement;
-
     // Extract farm name from Document name
     String farmName = 'Farm';
-    final nameElem = root.findElements('name').firstOrNull;
+    final documentElement = document.findAllElements('Document').firstOrNull;
+    final nameElem = documentElement?.findElements('name').firstOrNull ??
+        document.findAllElements('name').firstOrNull;
     if (nameElem != null) {
       farmName = nameElem.innerText;
     }
@@ -34,22 +35,22 @@ class KmlParser {
     final placemarks = <KmlPlacemark>[];
     FarmBoundary? farmBoundary;
 
-    for (final placemark in root.findElements('Placemark')) {
+    for (final placemark in document.findAllElements('Placemark')) {
       final pmId = placemark.getAttribute('id') ?? 'unknown';
       final pmNameElem = placemark.findElements('name').firstOrNull;
       final pmName = pmNameElem?.innerText ?? 'Unnamed';
 
       // Check if it's a Polygon (farm boundary)
-      final polygon = placemark.findElements('Polygon').firstOrNull;
+      final polygon = placemark.findAllElements('Polygon').firstOrNull;
       if (polygon != null) {
         farmBoundary = _parsePolygon(pmId, pmName, polygon);
         continue;
       }
 
       // Check if it's a Point (infrastructure/livestock)
-      final point = placemark.findElements('Point').firstOrNull;
+      final point = placemark.findAllElements('Point').firstOrNull;
       if (point != null) {
-        final pm = _parsePoint(pmId, pmName, point);
+        final pm = _parsePoint(pmId, pmName, placemark, point);
         placemarks.add(pm);
       }
     }
@@ -91,11 +92,13 @@ class KmlParser {
     }
 
     final coordsText = coordsElem.innerText.trim();
-    final coordLines =
-        coordsText.split('\n').map((s) => s.trim()).where((s) => s.isNotEmpty);
+    final tuples = coordsText
+        .split(RegExp(r'\s+'))
+        .map((s) => s.trim())
+        .where((s) => s.isNotEmpty);
 
-    for (final coordLine in coordLines) {
-      final parts = coordLine.split(',').map((s) => s.trim()).toList();
+    for (final tuple in tuples) {
+      final parts = tuple.split(',').map((s) => s.trim()).toList();
       if (parts.length >= 2) {
         final lng = double.tryParse(parts[0]);
         final lat = double.tryParse(parts[1]);
@@ -122,6 +125,7 @@ class KmlParser {
   static KmlPlacemark _parsePoint(
     String id,
     String name,
+    xml.XmlElement placemarkElem,
     xml.XmlElement pointElem,
   ) {
     final coordsElem = pointElem.findElements('coordinates').firstOrNull;
@@ -152,7 +156,7 @@ class KmlParser {
 
     // Try to extract ExtendedData if present
     final metadata = _parseExtendedData(
-      pointElem.findElements('ExtendedData').firstOrNull,
+      placemarkElem.findElements('ExtendedData').firstOrNull,
     );
 
     return KmlPlacemark.fromNameAndLocation(

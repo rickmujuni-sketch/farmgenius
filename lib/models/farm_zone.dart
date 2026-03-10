@@ -1,3 +1,5 @@
+import 'dart:math' as Math;
+
 // Core data models for FarmGenius zones, tasks, and activities
 
 /// Geographic point (latitude, longitude)
@@ -21,8 +23,6 @@ class GeoPoint {
 
   static double _toRad(double deg) => deg * (3.14159265359 / 180);
 }
-
-import 'dart:math' as Math;
 
 /// Zone type enumeration
 enum ZoneType {
@@ -156,7 +156,14 @@ class Task {
 
 enum TaskPriority { LOW, MEDIUM, HIGH, URGENT }
 
-enum TaskStatus { PENDING, IN_PROGRESS, COMPLETED, CANCELLED, OVERDUE }
+enum TaskStatus {
+  PENDING,
+  IN_PROGRESS,
+  REVIEW_PENDING,
+  COMPLETED,
+  CANCELLED,
+  OVERDUE,
+}
 
 /// Record of work done by staff
 class ActivityLog {

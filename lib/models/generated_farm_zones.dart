@@ -12,12 +12,12 @@ class GeneratedFarmZones {
       description: 'Primary maize crop zone',
       type: ZoneType.CROP,
       areaHectares: 5.2,
-      boundary: const [
-      const GeoPoint(lat: -7.078, lng: 38.914),
-      const GeoPoint(lat: -7.078, lng: 38.92),
-      const GeoPoint(lat: -7.083, lng: 38.92),
-      const GeoPoint(lat: -7.083, lng: 38.914),
-      const GeoPoint(lat: -7.078, lng: 38.914),
+      boundary: [
+      GeoPoint(lat: -7.078, lng: 38.914),
+      GeoPoint(lat: -7.078, lng: 38.92),
+      GeoPoint(lat: -7.083, lng: 38.92),
+      GeoPoint(lat: -7.083, lng: 38.914),
+      GeoPoint(lat: -7.078, lng: 38.914),
     ],
       metadata: {
       'zone_id': 'zone_a',
@@ -35,24 +35,53 @@ class GeneratedFarmZones {
     FarmZone(
       id: 'zone_b',
       name: 'Zone B - Livestock',
-      description: 'Cattle grazing and rearing zone',
+      description: 'Cattle grazing and rearing zone (updated stock records)',
       type: ZoneType.LIVESTOCK,
       areaHectares: 8.0,
-      boundary: const [
-      const GeoPoint(lat: -7.085, lng: 38.916),
-      const GeoPoint(lat: -7.085, lng: 38.924),
-      const GeoPoint(lat: -7.092, lng: 38.924),
-      const GeoPoint(lat: -7.092, lng: 38.916),
-      const GeoPoint(lat: -7.085, lng: 38.916),
+      boundary: [
+      GeoPoint(lat: -7.085, lng: 38.916),
+      GeoPoint(lat: -7.085, lng: 38.924),
+      GeoPoint(lat: -7.092, lng: 38.924),
+      GeoPoint(lat: -7.092, lng: 38.916),
+      GeoPoint(lat: -7.085, lng: 38.916),
     ],
       metadata: {
       'zone_id': 'zone_b',
       'zone_type': 'livestock',
       'livestock_type': 'Cattle',
-      'head_count': '24',
+      'head_count': '30',
       'area_hectares': '8.0',
-      'breed': 'Tanzanian Shorthorn',
+      'breed': 'Jersey, Ayrshire, Holstein',
+      'breed_mix': 'Jersey:10,Ayrshire:10,Holstein:10',
+      'stock_update_date': '2026-02-16',
+      'stock_update_note': 'Introduced Jersey, Ayrshire, Holstein cattle (10 each)',
       'expected_calendar': 'GRAZING,SUPPLEMENTAL_FEEDING,HEALTH_CHECK,BREEDING,CALVING',
+    },
+    ),
+
+    FarmZone(
+      id: 'zone_d',
+      name: 'Zone D - Sheep',
+      description: 'Dorper sheep grazing and health management zone',
+      type: ZoneType.LIVESTOCK,
+      areaHectares: 2.0,
+      boundary: [
+      GeoPoint(lat: -7.092, lng: 38.925),
+      GeoPoint(lat: -7.092, lng: 38.927),
+      GeoPoint(lat: -7.094, lng: 38.927),
+      GeoPoint(lat: -7.094, lng: 38.925),
+      GeoPoint(lat: -7.092, lng: 38.925),
+    ],
+      metadata: {
+      'zone_id': 'zone_d',
+      'zone_type': 'livestock',
+      'livestock_type': 'Sheep',
+      'head_count': '10',
+      'area_hectares': '2.0',
+      'breed': 'Dorper',
+      'stock_update_date': '2026-02-16',
+      'stock_update_note': 'Introduced Dorper sheep (10 head)',
+      'expected_calendar': 'GRAZING,SUPPLEMENTAL_FEEDING,HEALTH_CHECK,BREEDING',
     },
     ),
 
@@ -62,12 +91,12 @@ class GeneratedFarmZones {
       description: 'Water storage, equipment shed, and irrigation infrastructure',
       type: ZoneType.INFRASTRUCTURE,
       areaHectares: 0.5,
-      boundary: const [
-      const GeoPoint(lat: -7.093, lng: 38.913),
-      const GeoPoint(lat: -7.093, lng: 38.915),
-      const GeoPoint(lat: -7.095, lng: 38.915),
-      const GeoPoint(lat: -7.095, lng: 38.913),
-      const GeoPoint(lat: -7.093, lng: 38.913),
+      boundary: [
+      GeoPoint(lat: -7.093, lng: 38.913),
+      GeoPoint(lat: -7.093, lng: 38.915),
+      GeoPoint(lat: -7.095, lng: 38.915),
+      GeoPoint(lat: -7.095, lng: 38.913),
+      GeoPoint(lat: -7.093, lng: 38.913),
     ],
       metadata: {
       'zone_id': 'zone_c',
@@ -80,4 +109,17 @@ class GeneratedFarmZones {
     ),
 
   ];
+
+  static List<FarmZone> get allZones {
+    print('🔍 ZONES LOADED: ${zones.length} zones (source: generated_farm_zones.dart)');
+    for (final zone in zones) {
+      print('  - Zone: ${zone.name}, Type: ${zone.type}');
+      print('    Boundary points: ${zone.boundary.length}');
+      if (zone.boundary.isNotEmpty) {
+        final first = zone.boundary.first;
+        print('    Sample point: lat=${first.lat}, lng=${first.lng}');
+      }
+    }
+    return List<FarmZone>.from(zones);
+  }
 }

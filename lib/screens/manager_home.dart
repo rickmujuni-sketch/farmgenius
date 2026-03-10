@@ -1,1 +1,1 @@
-export 'manager_home_v2.dart';
+export 'manager_home_hub.dart';

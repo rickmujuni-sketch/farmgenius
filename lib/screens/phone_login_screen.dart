@@ -14,6 +14,7 @@ class PhoneLoginScreen extends StatefulWidget {
 class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
   final _phoneCtrl = TextEditingController(text: '+255');
   bool _loading = false;
+  String? _errorMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -39,15 +40,29 @@ class _PhoneLoginScreenState extends State<PhoneLoginScreen> {
                       }
                       setState(() => _loading = true);
                       final ok = await auth.sendPhoneOtp(_phoneCtrl.text.trim());
-                      setState(() => _loading = false);
+                      setState(() {
+                        _loading = false;
+                        _errorMessage = ok ? null : auth.lastAuthError;
+                      });
                       if (ok) {
                         Navigator.pushNamed(context, '/otp', arguments: {'phone': _phoneCtrl.text.trim()});
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.t('otp_send_failed'))));
+                        final details = auth.lastAuthError;
+                        final message = details == null || details.isEmpty
+                            ? loc.t('otp_send_failed')
+                            : '${loc.t('otp_send_failed')}\n$details';
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
                       }
                     },
               child: _loading ? const CircularProgressIndicator() : Text(loc.t('send_otp')),
             ),
+            if (_errorMessage != null && _errorMessage!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              SelectableText(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ],
           ],
         ),
       ),

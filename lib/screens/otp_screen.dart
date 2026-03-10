@@ -14,6 +14,7 @@ class _OtpScreenState extends State<OtpScreen> {
   final _otpCtrl = TextEditingController();
   bool _loading = false;
   String phone = '';
+  String? _errorMessage;
 
   @override
   void didChangeDependencies() {
@@ -41,7 +42,10 @@ class _OtpScreenState extends State<OtpScreen> {
                   : () async {
                       setState(() => _loading = true);
                       final ok = await auth.verifyPhoneOtp(phone, _otpCtrl.text.trim());
-                      setState(() => _loading = false);
+                      setState(() {
+                        _loading = false;
+                        _errorMessage = ok ? null : auth.lastAuthError;
+                      });
                       if (ok) {
                         final role = auth.role ?? 'staff';
                         if (role == 'owner') {
@@ -49,11 +53,22 @@ class _OtpScreenState extends State<OtpScreen> {
                         } else if (role == 'manager') Navigator.pushReplacementNamed(context, '/manager');
                         else Navigator.pushReplacementNamed(context, '/staff');
                       } else {
-                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(loc.t('otp_verify_failed'))));
+                        final details = auth.lastAuthError;
+                        final message = details == null || details.isEmpty
+                            ? loc.t('otp_verify_failed')
+                            : '${loc.t('otp_verify_failed')}\n$details';
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
                       }
                     },
               child: _loading ? const CircularProgressIndicator() : Text(loc.t('verify_otp')),
             ),
+            if (_errorMessage != null && _errorMessage!.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              SelectableText(
+                _errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
+            ],
           ],
         ),
       ),

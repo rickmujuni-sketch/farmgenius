@@ -1,10 +1,12 @@
 /// KML Parser Demo - Phase 1
 /// Shows how the real farm KML is parsed and automatically categorized
 /// Run this to see what zones will be auto-generated
+library;
 
 import 'package:flutter/foundation.dart';
-import '../models/kml_models.dart';
+import '../models/farm_zone.dart';
 import 'kml_parser_service.dart';
+import 'zone_inference_engine.dart';
 
 class KmlParserDemo {
   /// Parse the actual farm KML and print extracted data
@@ -58,35 +60,30 @@ class KmlParserDemo {
       debugPrint('\n========== END PHASE 1 ==========\n');
 
       // Print summary for Phase 2
-      debugPrint('\n========== PHASE 2 PREVIEW: ZONE GENERATION ==========\n');
-      debugPrint('The following ZONE will be generated from this data:\n');
+      debugPrint('\n========== PHASE 2: INFERENCE ENGINE OUTPUT ==========\n');
+      final inferredZones = ZoneInferenceEngine.inferZones(farm);
 
-      debugPrint('🌾 CROP ZONES:');
-      debugPrint('  • Remaining farm land (${farm.boundary.areaHectares.toStringAsFixed(2)} hectares)');
-      debugPrint('  • Could be divided into plots based on water distance');
+      final livestockZones =
+          inferredZones.where((z) => z.type == ZoneType.LIVESTOCK).toList();
+      final cropZones =
+          inferredZones.where((z) => z.type == ZoneType.CROP).toList();
 
-      debugPrint('\n🐄 LIVESTOCK ZONES:');
-      for (final livestockType in farm.livestockByType.keys) {
-        final locations = farm.livestockByType[livestockType]!;
-        for (final loc in locations) {
-          final typeStr = livestockType.toString().split('.').last;
-          debugPrint('  • ${loc.name} ($typeStr)');
-          debugPrint('    - 100m radius around: (${loc.location.latitude}, ${loc.location.longitude})');
-          debugPrint('    - Activities: daily feeding, health checks, breed management');
-        }
+      debugPrint('Inferred zones total: ${inferredZones.length}');
+
+      debugPrint('\n🐄 LIVESTOCK ZONES: ${livestockZones.length}');
+      for (final zone in livestockZones) {
+        debugPrint('  • ${zone.name}');
+        debugPrint('    - Radius: ${zone.metadata['radius_meters'] ?? 'n/a'}m');
+        debugPrint('    - Area: ${zone.areaHectares.toStringAsFixed(2)} hectares');
+        debugPrint('    - Livestock: ${zone.metadata['livestock_type'] ?? 'UNKNOWN'}');
+        debugPrint('    - Activities: ${zone.metadata['expected_calendar'] ?? ''}');
       }
 
-      debugPrint('\n🏥 INFRASTRUCTURE ZONES:');
-      for (final infra in farm.infrastructurePlacemarks) {
-        final typeStr = infra.type?.toString().split('.').last ?? 'OTHER';
-        debugPrint('  • ${infra.name} ($typeStr)');
-        if (typeStr == 'FARMHOUSE') {
-          debugPrint('    - Activities: security patrol, maintenance');
-        } else if (typeStr == 'WATER_SOURCE') {
-          debugPrint('    - Activities: pump maintenance, water testing');
-        } else if (typeStr == 'QUARTERS') {
-          debugPrint('    - Activities: quarters maintenance, amenity checks');
-        }
+      debugPrint('\n🌾 CROP ZONES: ${cropZones.length}');
+      for (final zone in cropZones) {
+        debugPrint('  • ${zone.name}');
+        debugPrint('    - Area: ${zone.areaHectares.toStringAsFixed(2)} hectares');
+        debugPrint('    - Activities: ${zone.metadata['expected_calendar'] ?? ''}');
       }
 
       debugPrint('\n========== END PHASE 2 PREVIEW ==========\n');

@@ -1,8 +1,13 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import '../models/farm_zone.dart';
 import '../models/generated_farm_zones.dart';
+import '../models/operations_assist.dart';
+import 'operations_assist_service.dart';
 import 'supabase_service.dart';
 import 'weather_service.dart';
+import 'zone_inference_engine.dart';
 
 /// The AI Orchestrator: self-driving farm management engine
 /// 
@@ -21,18 +26,52 @@ class AIOrchestrator extends ChangeNotifier {
   List<Task> generatedTasks = [];
   List<AnomalyDetection> detectedAnomalies = [];
   bool isRunning = false;
+  Future<void>? _zoneLoadFuture;
 
   AIOrchestrator() {
-    // Load zones from generated KML data at startup
-    zones = List.from(GeneratedFarmZones.zones);
+    _zoneLoadFuture = _initializeZones();
+  }
+
+  Future<void> _initializeZones() async {
+    try {
+      final inferredZones =
+          await ZoneInferenceEngine.inferZonesFromAsset('assets/farm_data/farm_boundary.kml');
+
+      if (inferredZones.isNotEmpty) {
+        zones = inferredZones;
+        print('🔍 ZONES LOADED: ${zones.length} zones (source: zone_inference_engine)');
+      } else {
+        zones = GeneratedFarmZones.allZones;
+        print('🔍 ZONES LOADED: ${zones.length} zones (fallback: generated_farm_zones.dart)');
+      }
+    } catch (e) {
+      print('Zone inference failed, falling back to generated zones: $e');
+      zones = GeneratedFarmZones.allZones;
+      print('🔍 ZONES LOADED: ${zones.length} zones (fallback: generated_farm_zones.dart)');
+    }
+
+    notifyListeners();
   }
 
   /// Run the orchestrator - checks all zones and creates necessary tasks
   /// Can be called daily or on-demand
   Future<void> runDailyOrchestration() async {
     if (isRunning) return;
+
+    if (_zoneLoadFuture != null) {
+      await _zoneLoadFuture;
+    }
+
+    final allowed = await _canRunOrchestrationForCurrentUser();
+    if (!allowed) {
+      print('🤖 ORCHESTRATION SKIPPED: current user is not manager/owner');
+      return;
+    }
+
     isRunning = true;
     notifyListeners();
+
+    print('🤖 ORCHESTRATION START: zones=${zones.length}');
 
     try {
       generatedTasks.clear();
@@ -43,9 +82,15 @@ class AIOrchestrator extends ChangeNotifier {
         await _orchestrateZone(zone);
       }
 
+      await _applyAssistRecommendations();
+
+      print('🤖 ORCHESTRATION GENERATED: tasks=${generatedTasks.length}, anomalies=${detectedAnomalies.length}');
+
       // Persist tasks and anomalies to Supabase
       await _persistTasks();
       await _persistAnomalies();
+
+      print('🤖 ORCHESTRATION END: persisted tasks/anomalies cycle complete');
 
       notifyListeners();
     } catch (e) {
@@ -56,8 +101,27 @@ class AIOrchestrator extends ChangeNotifier {
     }
   }
 
+  Future<bool> _canRunOrchestrationForCurrentUser() async {
+    try {
+      final userId = SupabaseService.client.auth.currentUser?.id;
+      if (userId == null || userId.isEmpty) return false;
+
+      final profile = await SupabaseService.client
+          .from('profiles')
+          .select<Map<String, dynamic>>('role')
+          .eq('id', userId)
+          .maybeSingle();
+
+      final role = (profile['role'] ?? '').toString().toLowerCase();
+      return role == 'manager' || role == 'owner';
+    } catch (_) {
+      return false;
+    }
+  }
+
   /// Orchestrate a single zone
   Future<void> _orchestrateZone(FarmZone zone) async {
+    print('🤖 ORCHESTRATE ZONE: ${zone.id} (${zone.type})');
     // 1. Check calendar-based activities
     await _checkCalendarActivities(zone);
 
@@ -109,8 +173,9 @@ class AIOrchestrator extends ChangeNotifier {
       );
 
       if (risk != 'LOW_RISK') {
+        final dateKey = _dateKey(w.date);
         final task = Task(
-          id: 'task_${zone.id}_weather_${DateTime.now().millisecondsSinceEpoch}',
+          id: 'task_${zone.id}_weather_${risk}_$dateKey',
           zoneId: zone.id,
           title: 'Weather Risk Mitigation: $risk',
           description:
@@ -135,18 +200,33 @@ class AIOrchestrator extends ChangeNotifier {
     if (lastLog != null) {
       final daysSinceLastActivity = DateTime.now().difference(lastLog).inDays;
       if (daysSinceLastActivity > 14) {
+        final dateKey = _dateKey(DateTime.now());
         final anomaly = AnomalyDetection(
-          id: 'anomaly_${zone.id}_gap_${DateTime.now().millisecondsSinceEpoch}',
+          id: _generateUuidV4(),
           zoneId: zone.id,
           type: AnomalyType.ACTIVITY_GAP,
           title: 'Activity Gap Detected',
           description: 'No activity in ${zone.name} for $daysSinceLastActivity days',
           severity: (daysSinceLastActivity / 30).clamp(0.0, 1.0),
           detectedAt: DateTime.now(),
-          data: {'days_since_activity': daysSinceLastActivity},
+          data: {'days_since_activity': daysSinceLastActivity, 'date_key': dateKey},
         );
         detectedAnomalies.add(anomaly);
       }
+    } else {
+      final dateKey = _dateKey(DateTime.now());
+      detectedAnomalies.add(
+        AnomalyDetection(
+          id: _generateUuidV4(),
+          zoneId: zone.id,
+          type: AnomalyType.ACTIVITY_GAP,
+          title: 'No Activity Baseline',
+          description: 'No activity logs found yet for ${zone.name}. Confirm operational baseline.',
+          severity: 0.35,
+          detectedAt: DateTime.now(),
+          data: {'reason': 'no_activity_logs', 'date_key': dateKey},
+        ),
+      );
     }
 
     // 2. Check for cost anomalies (would need cost data in Supabase)
@@ -165,26 +245,39 @@ class AIOrchestrator extends ChangeNotifier {
     if (lastHealthCheck != null) {
       final daysOverdue = DateTime.now().difference(lastHealthCheck).inDays - 30;
       if (daysOverdue > 0) {
+        final dateKey = _dateKey(DateTime.now());
         final anomaly = AnomalyDetection(
-          id: 'anomaly_${zone.id}_health_${DateTime.now().millisecondsSinceEpoch}',
+          id: _generateUuidV4(),
           zoneId: zone.id,
           type: AnomalyType.HEALTH_ISSUE,
           title: 'Health Check Overdue',
           description: 'Livestock in ${zone.name} has not had health check for $daysOverdue days',
           severity: (daysOverdue / 60).clamp(0.2, 1.0),
           detectedAt: DateTime.now(),
-          data: {'days_overdue': daysOverdue},
+          data: {'days_overdue': daysOverdue, 'date_key': dateKey},
         );
         detectedAnomalies.add(anomaly);
       }
+    } else {
+      final dateKey = _dateKey(DateTime.now());
+      detectedAnomalies.add(
+        AnomalyDetection(
+          id: _generateUuidV4(),
+          zoneId: zone.id,
+          type: AnomalyType.HEALTH_ISSUE,
+          title: 'Initial Health Check Required',
+          description: 'No health check history found for ${zone.name}. Schedule the first health check.',
+          severity: 0.4,
+          detectedAt: DateTime.now(),
+          data: {'reason': 'no_health_check_logs', 'date_key': dateKey},
+        ),
+      );
     }
   }
 
   /// Check if an activity is due for a zone
   bool _isActivityDue(FarmZone zone, ActivityStage activity, DateTime? lastTime) {
     // Simple rules - in production, use crop-specific calendars
-    const int defaultDays = 7; // Re-check activities weekly by default
-
     if (lastTime == null) {
       // Never done - check against planting/start date
       final plantingStr = zone.metadata['planting_date'];
@@ -192,7 +285,9 @@ class AIOrchestrator extends ChangeNotifier {
         final plantingDate = DateTime.parse(plantingStr);
         return DateTime.now().isAfter(plantingDate);
       }
-      return false;
+      // First-run behavior: if we have no logs yet, bootstrap expected activities
+      // so the system can become proactive immediately.
+      return true;
     }
 
     // Check if overdue based on activity type
@@ -201,6 +296,132 @@ class AIOrchestrator extends ChangeNotifier {
     // Different intervals for different activities
     final intervalDays = _getActivityInterval(activity);
     return daysSinceLastTime >= intervalDays;
+  }
+
+  Future<void> _applyAssistRecommendations() async {
+    try {
+      final snapshot = await OperationsAssistService.loadSnapshot();
+      if (snapshot.recommendations.isEmpty) {
+        return;
+      }
+
+      final dayKey = _dateKey(DateTime.now());
+      for (final rec in snapshot.recommendations.take(4)) {
+        final zone = _zoneForRecommendation(rec);
+        if (zone == null) continue;
+
+        final activity = _activityForRecommendation(rec);
+        final priority = _priorityForRecommendation(rec.priority);
+        final taskId = 'task_${zone.id}_assist_${rec.area}_$dayKey';
+
+        generatedTasks.add(
+          Task(
+            id: taskId,
+            zoneId: zone.id,
+            title: 'Assist: ${rec.title}',
+            description: rec.action,
+            activity: activity,
+            dueDate: DateTime.now().add(const Duration(days: 1)),
+            priority: priority,
+            status: TaskStatus.PENDING,
+            createdAt: DateTime.now(),
+            createdByAI: 'operations_assist',
+            metadata: {
+              'assist_area': rec.area,
+              'assist_priority': rec.priority,
+              'expected_impact': rec.expectedImpact,
+              'source': 'self_improving_assist',
+            },
+          ),
+        );
+
+        if (rec.priority == 'critical' || rec.priority == 'high') {
+          detectedAnomalies.add(
+            AnomalyDetection(
+              id: _generateUuidV4(),
+              zoneId: zone.id,
+              type: _anomalyTypeForRecommendation(rec.area),
+              title: 'Assist Alert: ${rec.title}',
+              description: rec.expectedImpact,
+              severity: rec.priority == 'critical' ? 0.9 : 0.72,
+              detectedAt: DateTime.now(),
+              data: {
+                'assist_area': rec.area,
+                'assist_action': rec.action,
+                'assist_priority': rec.priority,
+              },
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      print('Assist recommendation integration failed: $e');
+    }
+  }
+
+  FarmZone? _zoneForRecommendation(OperationsAssistRecommendation rec) {
+    if (zones.isEmpty) return null;
+    switch (rec.area) {
+      case 'maintenance':
+      case 'procurement':
+        return zones.firstWhere(
+          (zone) => zone.type == ZoneType.INFRASTRUCTURE,
+          orElse: () => zones.first,
+        );
+      case 'medication_vaccine':
+        return zones.firstWhere(
+          (zone) => zone.type == ZoneType.LIVESTOCK,
+          orElse: () => zones.first,
+        );
+      case 'planting':
+        return zones.firstWhere(
+          (zone) => zone.type == ZoneType.CROP,
+          orElse: () => zones.first,
+        );
+      default:
+        return zones.first;
+    }
+  }
+
+  ActivityStage _activityForRecommendation(OperationsAssistRecommendation rec) {
+    switch (rec.area) {
+      case 'maintenance':
+      case 'procurement':
+        return ActivityStage.MAINTENANCE;
+      case 'medication_vaccine':
+        return ActivityStage.HEALTH_CHECK;
+      case 'planting':
+        return ActivityStage.PLANTING;
+      default:
+        return ActivityStage.INSPECTION;
+    }
+  }
+
+  TaskPriority _priorityForRecommendation(String priority) {
+    switch (priority) {
+      case 'critical':
+        return TaskPriority.URGENT;
+      case 'high':
+        return TaskPriority.HIGH;
+      case 'medium':
+        return TaskPriority.MEDIUM;
+      default:
+        return TaskPriority.LOW;
+    }
+  }
+
+  AnomalyType _anomalyTypeForRecommendation(String area) {
+    switch (area) {
+      case 'maintenance':
+      case 'procurement':
+        return AnomalyType.COST_SPIKE;
+      case 'planting':
+        return AnomalyType.YIELD_RISK;
+      case 'medication_vaccine':
+        return AnomalyType.HEALTH_ISSUE;
+      default:
+        return AnomalyType.ACTIVITY_GAP;
+    }
   }
 
   /// Get recommended interval between activity occurrences
@@ -223,13 +444,15 @@ class AIOrchestrator extends ChangeNotifier {
   /// Create a task for an activity
   Task _createTaskForActivity(FarmZone zone, ActivityStage activity) {
     final now = DateTime.now();
+    final dueDate = now.add(const Duration(days: 1));
+    final dateKey = _dateKey(dueDate);
     return Task(
-      id: 'task_${zone.id}_${activity.toString()}_$now.millisecondsSinceEpoch',
+      id: 'task_${zone.id}_${activity.toString().split('.').last}_$dateKey',
       zoneId: zone.id,
       title: '${activity.toString().split('.').last.replaceAll('_', ' ')} - ${zone.name}',
       description: 'Perform ${activity.toString().split('.').last} activities in ${zone.name}',
       activity: activity,
-      dueDate: now.add(const Duration(days: 1)),
+      dueDate: dueDate,
       priority: TaskPriority.MEDIUM,
       status: TaskStatus.PENDING,
       createdAt: now,
@@ -252,20 +475,24 @@ class AIOrchestrator extends ChangeNotifier {
   /// Get last activity log for a zone
   Future<DateTime?> _getLastActivityLog(String zoneId, [ActivityStage? activity]) async {
     try {
-      var query = SupabaseService.client
-          .from(_tableLogs)
-          .select('logged_at')
-          .eq('zone_id', zoneId)
-          .order('logged_at', ascending: false)
-          .limit(1);
+      final result = activity != null
+          ? await SupabaseService.client
+              .from(_tableLogs)
+              .select('logged_at')
+              .eq('zone_id', zoneId)
+              .eq('activity', activity.toString().split('.').last)
+              .order('logged_at', ascending: false)
+              .limit(1)
+          : await SupabaseService.client
+              .from(_tableLogs)
+              .select('logged_at')
+              .eq('zone_id', zoneId)
+              .order('logged_at', ascending: false)
+              .limit(1);
 
-      if (activity != null) {
-        query = query.eq('activity', activity.toString().split('.').last);
-      }
-
-      final result = await query.execute();
-      if (result.error == null && result.data != null && (result.data as List).isNotEmpty) {
-        final loggedAtStr = (result.data as List).first['logged_at'] as String?;
+      if (result is List && result.isNotEmpty) {
+        final firstRow = result.first;
+        final loggedAtStr = firstRow is Map<String, dynamic> ? firstRow['logged_at'] as String? : null;
         if (loggedAtStr != null) {
           return DateTime.parse(loggedAtStr);
         }
@@ -279,31 +506,42 @@ class AIOrchestrator extends ChangeNotifier {
   /// Persist generated tasks to Supabase
   Future<void> _persistTasks() async {
     try {
+      int inserted = 0;
       for (final task in generatedTasks) {
         // Check if task already exists
         final existing = await SupabaseService.client
             .from(_tableTasks)
-            .select()
+            .select('id')
             .eq('id', task.id)
-            .execute();
+            .limit(1);
 
-        if (existing.error == null && (existing.data as List).isEmpty) {
+        if (existing is List && existing.isEmpty) {
           // Task doesn't exist - create it
-          await SupabaseService.client.from(_tableTasks).insert({
-            'id': task.id,
-            'zone_id': task.zoneId,
-            'title': task.title,
-            'description': task.description,
-            'activity': task.activity.toString().split('.').last,
-            'due_date': task.dueDate.toIso8601String(),
-            'priority': task.priority.toString().split('.').last,
-            'status': task.status.toString().split('.').last,
-            'created_at': task.createdAt.toIso8601String(),
-            'created_by_ai': task.createdByAI,
-            'metadata': task.metadata,
-          }).execute();
+          try {
+            await SupabaseService.client.from(_tableTasks).insert({
+              'id': task.id,
+              'zone_id': task.zoneId,
+              'title': task.title,
+              'description': task.description,
+              'activity': task.activity.toString().split('.').last,
+              'due_date': task.dueDate.toIso8601String(),
+              'priority': task.priority.toString().split('.').last,
+              'status': task.status.toString().split('.').last,
+              'created_at': task.createdAt.toIso8601String(),
+              'created_by_ai': task.createdByAI,
+              'metadata': task.metadata,
+            });
+            inserted++;
+          } catch (e) {
+            final message = e.toString().toLowerCase();
+            final isDuplicate = message.contains('duplicate key value') || message.contains('code: 23505');
+            if (!isDuplicate) {
+              rethrow;
+            }
+          }
         }
       }
+      print('🤖 TASK PERSIST: generated=${generatedTasks.length}, inserted=$inserted');
     } catch (e) {
       print('Error persisting tasks: $e');
     }
@@ -312,8 +550,12 @@ class AIOrchestrator extends ChangeNotifier {
   /// Persist anomalies to Supabase
   Future<void> _persistAnomalies() async {
     try {
+      int inserted = 0;
+      if (detectedAnomalies.isNotEmpty) {
+        print('🤖 ANOMALY SAMPLE ID: ${detectedAnomalies.first.id}');
+      }
       for (final anomaly in detectedAnomalies) {
-        await SupabaseService.client.from(_tableAnomalies).insert({
+        await SupabaseService.client.from(_tableAnomalies).upsert({
           'id': anomaly.id,
           'zone_id': anomaly.zoneId,
           'type': anomaly.type.toString().split('.').last,
@@ -322,27 +564,36 @@ class AIOrchestrator extends ChangeNotifier {
           'severity': anomaly.severity,
           'detected_at': anomaly.detectedAt.toIso8601String(),
           'data': anomaly.data,
-        }).execute();
+        }, onConflict: 'id');
+        inserted++;
       }
+      print('🤖 ANOMALY PERSIST: generated=${detectedAnomalies.length}, inserted=$inserted');
     } catch (e) {
       print('Error persisting anomalies: $e');
     }
   }
 
-  /// Get pending tasks for staff
-  Future<List<Task>> getPendingTasksForStaff() async {
+  /// Get actionable tasks for staff (assigned to current user or unassigned)
+  Future<List<Task>> getPendingTasksForStaff([String? staffId]) async {
     try {
-      final result = await SupabaseService.client
+      var query = SupabaseService.client
           .from(_tableTasks)
           .select()
-          .eq('status', 'PENDING')
-          .order('due_date', ascending: true)
-          .execute();
+          .neq('status', 'COMPLETED')
+          .neq('status', 'CANCELLED');
 
-      if (result.error == null && result.data != null) {
-        return (result.data as List)
+      if (staffId != null && staffId.isNotEmpty) {
+        query = query
+            .or('assigned_staff_id.eq.$staffId,assigned_staff_id.is.null');
+      }
+
+      final result = await query.order('due_date', ascending: true);
+
+      if (result is List) {
+        final tasks = result
             .map((t) => _taskFromMap(t as Map<String, dynamic>))
             .toList();
+        return _dedupeTasks(tasks);
       }
     } catch (e) {
       print('Error fetching tasks: $e');
@@ -357,11 +608,10 @@ class AIOrchestrator extends ChangeNotifier {
           .from(_tableAnomalies)
           .select()
           .order('detected_at', ascending: false)
-          .limit(50)
-          .execute();
+          .limit(50);
 
-      if (result.error == null && result.data != null) {
-        return (result.data as List).map((a) => _anomalyFromMap(a as Map<String, dynamic>)).toList();
+      if (result is List) {
+        return result.map((a) => _anomalyFromMap(a as Map<String, dynamic>)).toList();
       }
     } catch (e) {
       print('Error fetching anomalies: $e');
@@ -406,9 +656,51 @@ class AIOrchestrator extends ChangeNotifier {
       ),
       title: map['title'],
       description: map['description'],
-      severity: (map['severity'] as num?)?.toDouble() ?? 0.5,
+      severity: _safeToDouble(map['severity'], fallback: 0.5),
       detectedAt: DateTime.parse(map['detected_at']),
       data: (map['data'] as Map<String, dynamic>?) ?? {},
     );
+  }
+
+  double _safeToDouble(dynamic value, {double fallback = 0.0}) {
+    if (value == null) return fallback;
+    if (value is num) return value.toDouble();
+    return double.tryParse(value.toString()) ?? fallback;
+  }
+
+  String _dateKey(DateTime date) {
+    return '${date.year}${date.month.toString().padLeft(2, '0')}${date.day.toString().padLeft(2, '0')}';
+  }
+
+  List<Task> _dedupeTasks(List<Task> tasks) {
+    final bySignature = <String, Task>{};
+    for (final task in tasks) {
+      final signature = '${task.zoneId}|${task.activity}|${task.dueDate.year}-${task.dueDate.month}-${task.dueDate.day}|${task.status}';
+      final existing = bySignature[signature];
+      if (existing == null || task.createdAt.isAfter(existing.createdAt)) {
+        bySignature[signature] = task;
+      }
+    }
+
+    final deduped = bySignature.values.toList();
+    deduped.sort((a, b) => a.dueDate.compareTo(b.dueDate));
+    return deduped;
+  }
+
+  String _generateUuidV4() {
+    final random = math.Random();
+    final bytes = List<int>.generate(16, (_) => random.nextInt(256));
+
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+    String toHex(int value) => value.toRadixString(16).padLeft(2, '0');
+    final hex = bytes.map(toHex).join();
+
+    return '${hex.substring(0, 8)}-'
+        '${hex.substring(8, 12)}-'
+        '${hex.substring(12, 16)}-'
+        '${hex.substring(16, 20)}-'
+        '${hex.substring(20, 32)}';
   }
 }

@@ -1,6 +1,7 @@
 /// Models for KML parsing and manipulation
 /// Used in Phase 1: Parse actual farm KML
 /// Represents raw KML data before zone inference
+library;
 
 import 'dart:math' as math;
 
@@ -200,6 +201,10 @@ class KmlPlacemark {
       detectedLivestock = LivestockType.FISH_POND;
     }
 
+    if (detectedType == null && detectedLivestock != null) {
+      detectedType = PointType.LIVESTOCK_AREA;
+    }
+
     return KmlPlacemark(
       id: id,
       name: name,
@@ -239,7 +244,10 @@ class ParsedKmlFarm {
 
   /// Filter only livestock placemarks
   List<KmlPlacemark> get livestockPlacemarks =>
-      placemarks.where((p) => p.type == PointType.LIVESTOCK_AREA).toList();
+      placemarks
+        .where((p) =>
+          p.type == PointType.LIVESTOCK_AREA || p.livestockType != null)
+        .toList();
 
   /// Filter only infrastructure placemarks
   List<KmlPlacemark> get infrastructurePlacemarks =>

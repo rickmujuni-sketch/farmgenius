@@ -1,11 +1,11 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'farm_zone.dart';
+import '../models/farm_zone.dart';
 
 /// NASA POWER API weather service
 /// Fetches weather data for the farm to enable AI decision-making
 class WeatherService {
-  static const String _nasaUrl = 'https://power.larc.nasa.gov/api/v1/daily';
+  static const String _nasaUrl = 'https://power.larc.nasa.gov/api/temporal/daily/point';
 
   /// Fetch weather data for a location
   /// NASA POWER API returns daily weather data
@@ -15,9 +15,11 @@ class WeatherService {
     required int days,
   }) async {
     try {
-      // Calculate date range (last 30 days for context + forecast)
+      // NASA POWER daily endpoint provides historical/reanalysis data.
+      // We fetch the requested trailing window ending today.
       final endDate = DateTime.now();
-      final startDate = endDate.subtract(Duration(days: 1));
+      final safeDays = days < 1 ? 1 : days;
+      final startDate = endDate.subtract(Duration(days: safeDays - 1));
 
       // Format: yyyyMMdd
       final startStr = _formatDate(startDate);
@@ -25,12 +27,12 @@ class WeatherService {
 
       final params = {
         'parameters': 'T2M,RH2M,PRECTOTCORR,WS2M,GWETROOT', // temp, humidity, precip, wind, soil moisture
-        'community': 'ag',
+        'community': 'AG',
         'longitude': lng.toString(),
         'latitude': lat.toString(),
         'start': startStr,
         'end': endStr,
-        'format': 'json',
+        'format': 'JSON',
       };
 
       final uri = Uri.parse(_nasaUrl).replace(queryParameters: params);
