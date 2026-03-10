@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Local JDK bundle (do not commit)
+/oracleJdk-25.jdk/
