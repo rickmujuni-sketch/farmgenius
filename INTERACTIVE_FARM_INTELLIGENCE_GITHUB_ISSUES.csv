@@ -1,0 +1,291 @@
+Title,Body,Labels,Milestone,Assignees
+"[EPIC-A] Map Command Center","Goal: Make the map the operational command interface for all zones and assets.
+
+Scope:
+- Zone boundaries and labels
+- Asset and operational layers
+- Risk overlays
+- Zone command drawer
+
+Acceptance:
+- All zones visible with boundaries and names
+- Layer toggles update without reload
+- Zone drawer opens with live metrics","epic,map,priority:P0","M1: Map Command Center Foundation",""
+"[EPIC-B] Action Execution Framework","Goal: Convert insights into immediate, traceable actions.
+
+Scope:
+- Task actions (create/start/complete/cancel)
+- Alert actions (resolve/escalate/request evidence)
+- Daily check and navigation actions
+
+Acceptance:
+- All actions persist with actor and timestamp
+- Errors are surfaced clearly","epic,actions,priority:P0","M2: Action Workflows + Daily Operations",""
+"[EPIC-C] Proactive Question Engine","Goal: Automatically ask high-value questions when critical data is missing.
+
+Scope:
+- Trigger rules
+- Queue lifecycle
+- Role-based response UX
+
+Acceptance:
+- Correct lifecycle transitions
+- Idempotent trigger behavior","epic,questions,priority:P0","M3: Proactive Question Engine",""
+"[EPIC-D] Recommendation Engine v1","Goal: Generate explainable, ranked recommendations with immediate actions.
+
+Scope:
+- Category-based generation
+- Ranking and expiry
+- Action lifecycle tracking
+
+Acceptance:
+- Recommendations include rationale/confidence/impact
+- Actions update status and audit trail","epic,recommendations,priority:P0","M4: Recommendation Engine v1",""
+"[EPIC-E] Learning and Adaptation Loop","Goal: Improve recommendation quality over time from outcomes and operator behavior.
+
+Scope:
+- Outcome tracking windows (1/7/30/90)
+- Adaptive weighting
+- Prompt suppression for low-value repetition
+
+Acceptance:
+- Recommendation ordering improves using feedback","epic,learning,priority:P1","M5: Learning Loop + External Signals",""
+"[EPIC-F] External Signal Integration","Goal: Integrate weather and market signals into proactive planning.
+
+Scope:
+- Weather ingestion and triggers
+- Market ingestion and pricing-aware recommendations
+- Degraded mode on outage
+
+Acceptance:
+- Valid recommendations generated from external events","epic,external-signals,priority:P1","M5: Learning Loop + External Signals",""
+"[EPIC-G] Geospatial Data Completion","Goal: Close map data gaps for operational precision.
+
+Scope:
+- Plot 12 precision validation
+- Water point mapping
+- Gate mapping
+- Fence segment digitization
+
+Acceptance:
+- Critical geospatial gaps reduced to zero","epic,geospatial,priority:P0","M1: Map Command Center Foundation",""
+"[EPIC-H] Security, Observability, and Readiness","Goal: Ensure production-safe behavior and diagnosability.
+
+Scope:
+- RLS validation
+- telemetry and monitoring
+- release hardening
+
+Acceptance:
+- No open P0 auth/data integrity defects","epic,security,observability,priority:P0","M6: Hardening + Go-Live",""
+"[STORY-A1] Render inferred zone polygons","Parent: EPIC-A
+
+Implement:
+- Render all inferred and mapped zone polygons
+- Show zone labels and type icons
+
+Acceptance:
+- All zones visible and selectable","story,map,priority:P0","M1: Map Command Center Foundation",""
+"[STORY-A2] Add satellite/street base map toggle","Parent: EPIC-A
+
+Implement map style switcher with persisted preference.
+
+Acceptance:
+- Toggle updates map instantly
+- Preference restored on app relaunch","story,map,priority:P0","M1: Map Command Center Foundation",""
+"[STORY-A3] Add zoom controls and zoom indicator","Parent: EPIC-A
+
+Implement + and - controls plus visible current zoom level.
+
+Acceptance:
+- Zoom controls work on mobile
+- Zoom indicator updates as map moves","story,map,priority:P0","M1: Map Command Center Foundation",""
+"[STORY-A4] Add pan/scroll gesture toggle","Parent: EPIC-A
+
+Implement user toggle for gesture enable/disable and persist setting.
+
+Acceptance:
+- Gestures can be turned on/off
+- State persists across restarts","story,map,priority:P0","M1: Map Command Center Foundation",""
+"[STORY-A5] Build layer toggle panel scaffold","Parent: EPIC-A
+
+Implement UI for toggling asset/operational layers.
+
+Acceptance:
+- Layer chips visible and interactive
+- No full-screen reload needed","story,map,priority:P1","M1: Map Command Center Foundation",""
+"[STORY-A6] Open zone command drawer on zone tap","Parent: EPIC-A
+
+Implement tap-to-open drawer with zone identity and baseline metadata.
+
+Acceptance:
+- Drawer opens under 300ms
+- Correct zone selected","story,map,priority:P0","M1: Map Command Center Foundation",""
+"[STORY-B1] Create and assign task action","Parent: EPIC-B
+
+Implement create task flow with owner, priority, due block.
+
+Acceptance:
+- Task persisted and visible immediately","story,actions,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-B2] Start/complete/cancel task actions","Parent: EPIC-B
+
+Implement lifecycle buttons with status persistence.
+
+Acceptance:
+- Status transitions accurate and auditable","story,actions,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-B3] Resolve anomaly from manager dashboard","Parent: EPIC-B
+
+Implement resolve action with manager note and actor metadata.
+
+Acceptance:
+- Resolved anomalies no longer shown as unresolved","story,actions,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-B4] Add open-in-maps navigation","Parent: EPIC-B
+
+Implement external navigation to selected zone center.
+
+Acceptance:
+- Map app opens with correct coordinates","story,actions,mobile,priority:P1","M2: Action Workflows + Daily Operations",""
+"[STORY-B5] Create/update daily check from map context","Parent: EPIC-B
+
+Implement map-context daily check form and save flow.
+
+Acceptance:
+- Check is created and listed in recent checks","story,actions,checks,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-B6] Add action confirmation and error UX","Parent: EPIC-B
+
+Standardize confirmations and error surfacing for all immediate actions.
+
+Acceptance:
+- Success/failure states visible and clear","story,ux,priority:P1","M2: Action Workflows + Daily Operations",""
+"[STORY-C1] Trigger missing-check questions","Parent: EPIC-C
+
+Create question when expected daily check is missing by zone/time block.
+
+Acceptance:
+- Trigger creates one active question per condition window","story,questions,priority:P0","M3: Proactive Question Engine",""
+"[STORY-C2] Trigger livestock mismatch questions","Parent: EPIC-C
+
+Create question when count mismatch exceeds threshold.
+
+Acceptance:
+- High-priority question with due time and context","story,questions,livestock,priority:P0","M3: Proactive Question Engine",""
+"[STORY-C3] Build role-based question inbox","Parent: EPIC-C
+
+Manager sees all relevant; staff sees assigned.
+
+Acceptance:
+- Visibility matches role policy","story,questions,security,priority:P0","M3: Proactive Question Engine",""
+"[STORY-C4] Add typed response submission flow","Parent: EPIC-C
+
+Support yes/no, numeric, text, choice, evidence request response types.
+
+Acceptance:
+- Response persists and queue status updates to answered","story,questions,priority:P0","M3: Proactive Question Engine",""
+"[STORY-D1] Generate category-based recommendations","Parent: EPIC-D
+
+Implement generation by operational categories and trigger context.
+
+Acceptance:
+- Recommendations emitted with category and rationale","story,recommendations,priority:P0","M4: Recommendation Engine v1",""
+"[STORY-D2] Implement ranking and expiry logic","Parent: EPIC-D
+
+Implement confidence*impact*urgency/effort ranking and expiry pruning.
+
+Acceptance:
+- Sorted recommendations and stale suppression","story,recommendations,priority:P0","M4: Recommendation Engine v1",""
+"[STORY-D3] Build recommendation cards with explainability","Parent: EPIC-D
+
+Display why now, triggering data points, and expected effect.
+
+Acceptance:
+- Explainability visible on all recommendation cards","story,recommendations,ux,priority:P0","M4: Recommendation Engine v1",""
+"[STORY-D4] Implement recommendation action lifecycle","Parent: EPIC-D
+
+Add accept/modify/defer/reject/execute with audit logs.
+
+Acceptance:
+- Action updates status and inserts action trail","story,recommendations,priority:P0","M4: Recommendation Engine v1",""
+"[STORY-E1] Capture 1/7/30/90-day outcomes","Parent: EPIC-E
+
+Implement outcome records for executed recommendations.
+
+Acceptance:
+- Outcomes persist and query correctly by window","story,learning,priority:P1","M5: Learning Loop + External Signals",""
+"[STORY-E2] Adaptive weighting from outcomes","Parent: EPIC-E
+
+Adjust recommendation confidence/priority using historical outcomes.
+
+Acceptance:
+- Weight changes affect future ordering","story,learning,priority:P1","M5: Learning Loop + External Signals",""
+"[STORY-E3] Suppress repetitive low-value prompts","Parent: EPIC-E
+
+Detect repetition patterns and reduce nuisance prompts.
+
+Acceptance:
+- Repeat low-value prompt rate declines","story,learning,priority:P2","M5: Learning Loop + External Signals",""
+"[STORY-F1] Integrate weather feed and weather triggers","Parent: EPIC-F
+
+Ingest weather and generate weather-risk recommendations.
+
+Acceptance:
+- Heavy-rain scenario produces valid recommendations","story,weather,priority:P1","M5: Learning Loop + External Signals",""
+"[STORY-F2] Integrate market feed and market triggers","Parent: EPIC-F
+
+Ingest market price signals and generate harvest timing guidance.
+
+Acceptance:
+- Price-shock scenario produces financial recommendations","story,market,priority:P1","M5: Learning Loop + External Signals",""
+"[STORY-F3] Implement external feed degraded mode","Parent: EPIC-F
+
+Detect outages and mark stale data while keeping app operational.
+
+Acceptance:
+- Warning shown; core actions continue functioning","story,resilience,priority:P0","M5: Learning Loop + External Signals",""
+"[STORY-G1] Validate Plot 12 precision boundary","Parent: EPIC-G
+
+Complete precision verification and update geometry if needed.
+
+Acceptance:
+- Boundary validated against field confirmation","story,geospatial,priority:P0","M1: Map Command Center Foundation",""
+"[STORY-G2] Map and geocode water points","Parent: EPIC-G
+
+Capture and store water point locations and metadata.
+
+Acceptance:
+- Water points visible as infrastructure layer","story,geospatial,infrastructure,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-G3] Map gate points and access status","Parent: EPIC-G
+
+Capture gate locations and operational state.
+
+Acceptance:
+- Gates visible and queryable","story,geospatial,infrastructure,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-G4] Digitize fence segments","Parent: EPIC-G
+
+Create 1 km fence segment geometries and status attributes.
+
+Acceptance:
+- Fence layer displays complete route and status","story,geospatial,infrastructure,priority:P0","M2: Action Workflows + Daily Operations",""
+"[STORY-H1] Run manager/staff RLS negative and positive QA","Parent: EPIC-H
+
+Execute role-based QA scripts and record evidence.
+
+Acceptance:
+- Protected operations denied for staff and allowed for manager","story,security,priority:P0","M6: Hardening + Go-Live",""
+"[STORY-H2] Add trigger/recommendation telemetry dashboards","Parent: EPIC-H
+
+Track generation counts, latency, error rates, and action conversion.
+
+Acceptance:
+- Dashboards available for release readiness","story,observability,priority:P1","M6: Hardening + Go-Live",""
+"[STORY-H3] Performance and crash hardening","Parent: EPIC-H
+
+Profile map/drawer/render performance and fix bottlenecks.
+
+Acceptance:
+- Performance targets met, no P0 crash defects","story,performance,priority:P0","M6: Hardening + Go-Live",""
+"[STORY-H4] Release gate checklist execution","Parent: EPIC-H
+
+Execute release gate checklist and sign-off report.
+
+Acceptance:
+- All P0 acceptance criteria marked pass","story,release,priority:P0","M6: Hardening + Go-Live",""

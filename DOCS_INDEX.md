@@ -2,6 +2,14 @@
 
 ## Quick Navigation
 
+### **I Want the Full App Manual (Recommended)**
+👉 Read: [`FARMGENIUS_COMPLETE_LEARNING_MANUAL.md`](FARMGENIUS_COMPLETE_LEARNING_MANUAL.md)
+👉 Download PDF: [`FARMGENIUS_COMPLETE_LEARNING_MANUAL.pdf`](FARMGENIUS_COMPLETE_LEARNING_MANUAL.pdf)
+- Complete end-to-end system guide
+- Role-based demonstrations (Owner/Manager/Staff)
+- Reporting workflow (WhatsApp/CSV/PDF)
+- Setup, security, troubleshooting, and training plan
+
 ### **I Just Want to Test Phase 1 (5 min)**
 👉 Start here: [`PHASE_1_QUICK_START.md`](PHASE_1_QUICK_START.md)
 - Setup instructions
@@ -28,6 +36,13 @@
 ---
 
 ## 📚 Full Documentation Map
+
+### **Complete Application Manual (LATEST)**
+
+| Doc | Purpose | Audience | Read Time |
+|-----|---------|----------|-----------|
+| [FARMGENIUS_COMPLETE_LEARNING_MANUAL.md](FARMGENIUS_COMPLETE_LEARNING_MANUAL.md) | End-to-end practical handbook | Users + Developers | 45–60 min |
+| [FARMGENIUS_COMPLETE_LEARNING_MANUAL.pdf](FARMGENIUS_COMPLETE_LEARNING_MANUAL.pdf) | Downloadable pre-formatted handbook | Users + Developers | 45–60 min |
 
 ### **Phase 1: KML Parsing (TODAY)**
 

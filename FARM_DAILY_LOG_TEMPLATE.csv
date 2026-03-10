@@ -1,0 +1,6 @@
+Incident ID,Date,Time,Reporter,Command Type,Details,Zone/Location,Severity,Evidence Required,Evidence Attached,Owner Assigned,ETA,Status,Closed Time,Resolution Notes,Follow-up Needed
+FG-YYYYMMDD-001,2026-02-28,06:05,Staff Name,SICK,goat limping,Goat Pen,HIGH,Yes,Yes,Peter,30min,OPEN,,,
+FG-YYYYMMDD-002,2026-02-28,06:20,Staff Name,EGGS,chicken 45,Poultry House,LOW,No,No,Mary,End of shift,CLOSED,2026-02-28 17:30,Recorded and verified,No
+FG-YYYYMMDD-003,2026-02-28,07:10,Staff Name,FENCE BROKEN,near road section B3,Perimeter Fence,HIGH,Yes,Yes,John,1hr,IN_PROGRESS,,Temporary wire fix started,Yes
+FG-YYYYMMDD-004,2026-02-28,08:00,Staff Name,NO WATER,goat pen,Goat Pen,HIGH,No,No,Alex,20min,OPEN,,,
+FG-YYYYMMDD-005,2026-02-28,09:15,Staff Name,HARVEST,bananas 30 bunches,Plot 12,MEDIUM,Yes,Yes,Ruth,Same day,CLOSED,2026-02-28 14:10,Harvest complete and stored,No

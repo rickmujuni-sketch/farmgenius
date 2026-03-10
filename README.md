@@ -79,3 +79,33 @@ configuration for convenience.
 
 That’s it for Milestone 1! Feel free to explore the code in `lib/services`
 and `lib/screens` to understand how authentication is wired together.
+
+---
+
+## Share a trusted feedback link (Web)
+
+Use this to publish a single URL for third-party reviewers.
+
+### Prerequisites
+
+- Firebase project created in your Google account
+- Firebase CLI installed and authenticated:
+
+```bash
+npm install -g firebase-tools
+firebase login
+```
+
+### One-time setup
+
+1. Open `.firebaserc` and replace `YOUR_FIREBASE_PROJECT_ID` with your real project id.
+2. Ensure web hosting files are present (`firebase.json` already configured for Flutter web SPA routing).
+
+### Deploy and get a shareable link
+
+```bash
+./scripts/deploy_feedback_web.sh <your-firebase-project-id>
+```
+
+After deploy completes, Firebase prints a Hosting URL (for example `https://<project-id>.web.app`).
+Share that URL with your trusted reviewers.

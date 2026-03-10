@@ -1,0 +1,6 @@
+Week Start,Week End,Total Incidents,Critical Incidents,High Incidents,Incidents With Required Evidence,Incidents With Evidence Attached,Evidence Completion %,Median ACK Minutes (Critical/High),Median Close Hours (All),Incidents Closed Within SLA,Closure SLA %,Repeat Incidents (same type+zone within 7 days),Repeat Incident Rate %,Daily Reporting Compliance %,Egg Reporting Days Expected,Egg Reporting Days Received,Egg Reporting Compliance %,Harvest Reporting Days Expected,Harvest Reporting Days Received,Harvest Reporting Compliance %,Open Incidents End of Week,Top 3 Incident Types,Top 3 Incident Zones,Notes/Actions
+2026-02-24,2026-03-02,42,3,12,26,24,92.3,8,5.4,36,85.7,6,14.3,90,7,7,100,5,4,80,4,"FENCE BROKEN; NO WATER; SICK","Plot 12; Goat Pen; Poultry House","Increase fence checks near road and morning water checks"
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,,
