@@ -1,0 +1,25 @@
+#!/usr/bin/env expect -f
+
+set timeout -1
+
+set project_root [file normalize [file join [file dirname [info script]] ..]]
+cd $project_root
+
+spawn flutter run -d CCB2D070-0578-4C75-8D1D-57984029E5E0 --debug --dart-define-from-file=secrets/dev.local.json --dart-define=FORCE_HOME_ROUTE=owner
+
+expect {
+  -re {Flutter run key commands\.} {
+    send "d\r"
+    exp_continue
+  }
+  -re {Lost connection to device\.} {
+    exit 0
+  }
+  eof {
+    catch wait result
+    if {[llength $result] >= 4} {
+      exit [lindex $result 3]
+    }
+    exit 0
+  }
+}

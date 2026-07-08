@@ -1,0 +1,14 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Owner Mode (Auto-Detach)",
+      "type": "shell",
+      "command": "./scripts/run_owner_detached.expect",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
